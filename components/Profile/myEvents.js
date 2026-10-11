@@ -43,6 +43,31 @@ function MyEvents() {
                         custMobile: payData.custMobile || '',
                         returnUrl: payData.returnUrl || window.location.origin + '/api/payment/verify'
                     }
+
+                    const handleCancel = async (e) => {
+                        if (e.data === 'cancelTransaction' || e.data === 'sessionTimeout') {
+                            window.removeEventListener('message', handleCancel);
+                            const orderId = payData.merchTxnId || payData.orderId;
+                            if (orderId) {
+                                try {
+                                    await fetch('/api/payment/verify', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            order_id: orderId,
+                                            status: 'CANCELLED',
+                                            action: 'cancel'
+                                        })
+                                    });
+                                } catch (cancelErr) {
+                                    console.error('Cancel notify error:', cancelErr);
+                                }
+                                window.location.href = `/payment-status?order=${encodeURIComponent(orderId)}&success=false&status=CANCELLED`;
+                            }
+                        }
+                    };
+                    window.addEventListener('message', handleCancel);
+
                     if (window.AtomPaynetz) {
                         new window.AtomPaynetz(options, 'prod');
                     }

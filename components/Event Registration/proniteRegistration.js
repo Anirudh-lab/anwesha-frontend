@@ -19,12 +19,41 @@ function loadScript(src) {
 function openPay(data) {
     const options = {
         atomTokenId: data.atomTokenId,
-        merchId: data.merchId,
-        custEmail: data.custEmail,
-        custMobile: data.custMobile,
-        returnUrl: data.returnUrl,
+        merchId: data.merchId || '564719',
+        custEmail: data.custEmail || '',
+        custMobile: data.custMobile || '',
+        returnUrl: data.returnUrl || (typeof window !== 'undefined' ? window.location.origin + '/api/payment/verify' : ''),
     }
-    let atom = new AtomPaynetz(options, 'uat')
+
+    const handleCancel = async (e) => {
+        if (e.data === 'cancelTransaction' || e.data === 'sessionTimeout') {
+            window.removeEventListener('message', handleCancel);
+            const orderId = data.merchTxnId || data.orderId;
+            if (orderId) {
+                try {
+                    await fetch('/api/payment/verify', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            order_id: orderId,
+                            status: 'CANCELLED',
+                            action: 'cancel'
+                        })
+                    });
+                } catch (cancelErr) {
+                    console.error('Cancel notify error:', cancelErr);
+                }
+                if (typeof window !== 'undefined') {
+                    window.location.href = `/payment-status?order=${encodeURIComponent(orderId)}&success=false&status=CANCELLED`;
+                }
+            }
+        }
+    };
+    if (typeof window !== 'undefined') {
+        window.addEventListener('message', handleCancel);
+    }
+
+    let atom = new AtomPaynetz(options, 'prod')
 }
 async function proniteRegistration(
     eventID,
