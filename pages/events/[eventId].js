@@ -147,7 +147,7 @@ const EventDetailsPage = () => {
                             router,
                             () => {} // closeHandler equivalent
                         )
-                        if (result) {
+                        if (result && !result.openedGateway) {
                             setRegistrationResult(result)
                         }
                     } else {

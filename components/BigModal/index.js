@@ -32,7 +32,11 @@ const Modal = (props) => {
                             props.closeHandler
                         )
                         if (result) {
-                            setRegistrationResult(result)
+                            if (result.openedGateway) {
+                                if (props.closeHandler) props.closeHandler()
+                            } else {
+                                setRegistrationResult(result)
+                            }
                         }
                     } else {
                         // Team event — navigate to team registration form
