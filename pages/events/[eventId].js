@@ -262,8 +262,23 @@ const EventDetailsPage = () => {
                                     alt={title}
                                     className={styles.poster}
                                     onError={(e) => {
-                                        if (e.target.src !== '/events/poster.png') {
-                                            e.target.src = '/events/poster.png'
+                                        const targetId = event.id || event._id || eventId;
+                                        if (targetId && !e.target.dataset.retried) {
+                                            e.target.dataset.retried = 'true';
+                                            fetch(`${host}/events/${targetId}/poster?fresh=true`)
+                                                .then(r => r.json())
+                                                .then(data => {
+                                                    if (data?.success && data?.url) {
+                                                        e.target.src = data.url;
+                                                    } else {
+                                                        e.target.src = '/events/poster.png';
+                                                    }
+                                                })
+                                                .catch(() => {
+                                                    e.target.src = '/events/poster.png';
+                                                });
+                                        } else if (e.target.src !== '/events/poster.png') {
+                                            e.target.src = '/events/poster.png';
                                         }
                                     }}
                                 />
