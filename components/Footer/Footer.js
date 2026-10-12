@@ -29,14 +29,14 @@ const Footer = () => {
           />
         </div>
         <div className={styles.footer_content}>
-            <div className={styles.footer_upper}>
-              <div className={styles.foter_logo}>
-                <Image
-                  src="/navbar/logo.svg"
-                  alt="Anwesha logo"
-                  width={260}
-                  height={93}
-                />
+          <div className={styles.footer_upper}>
+            <div className={styles.foter_logo}>
+              <Image
+                src="/navbar/logo.svg"
+                alt="Anwesha logo"
+                width={260}
+                height={93}
+              />
             </div>
             <div className={styles.social_logo}>
               <div className={styles.social_logo_container}>
@@ -110,7 +110,7 @@ const Footer = () => {
               <h4>
                 Anwesha Office, <br />
                 Indian Institute of Technology Patna, <br />
-                Bihta, Patna - 801103 <br />
+                Bihta, Patna - 801106 <br />
                 <span
                   onClick={() => router.push("/contact")}
                   style={{ textDecoration: "underline", cursor: "pointer" }}
@@ -120,7 +120,7 @@ const Footer = () => {
                 <br />
                 For Event issues: +91 8825253741
                 <br />
-           
+
                 <span style={{ color: "cyan" }}>Note: </span> If the site is
                 stuck, please clear site data or login in incognito.
               </h4>

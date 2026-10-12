@@ -326,6 +326,51 @@ textarea.ac-input { resize: vertical; min-height: 96px; line-height: 1.5; }
     border-radius: 10px;
 }
 
+/* gender selector */
+.ac-gender-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.ac-gender-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 11px;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    user-select: none;
+}
+
+.ac-gender-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(242, 191, 81, 0.35);
+}
+
+.ac-gender-option.selected {
+    background: rgba(242, 191, 81, 0.12);
+    border-color: ${GOLD};
+    box-shadow: 0 0 0 1px ${GOLD}, 0 0 0 4px rgba(242, 191, 81, 0.16);
+}
+
+.ac-gender-option input[type='radio'] {
+    width: 18px;
+    height: 18px;
+    accent-color: ${GOLD};
+    cursor: pointer;
+    margin: 0;
+}
+
+.ac-gender-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
 /* switch */
 .ac-switch {
     display: flex;
@@ -684,6 +729,7 @@ export default function AccommodationPage() {
     const [leadId, setLeadId] = useState('')
     const [groupMembers, setGroupMembers] = useState([])
     const [newMemberInput, setNewMemberInput] = useState('')
+    const [gender, setGender] = useState('Male')
     const [totalMales, setTotalMales] = useState(1)
     const [totalFemales, setTotalFemales] = useState(0)
     const [fromDate, setFromDate] = useState('2027-02-15')
@@ -700,14 +746,28 @@ export default function AccommodationPage() {
         if (user?.anwesha_id) {
             setLeadId(user.anwesha_id)
             if (user.gender === 'Female') {
+                setGender('Female')
                 setTotalMales(0)
                 setTotalFemales(1)
             } else {
+                setGender('Male')
                 setTotalMales(1)
                 setTotalFemales(0)
             }
         }
     }, [user])
+
+    const handleGenderChange = (selected) => {
+        setGender(selected)
+        const totalPeople = 1 + groupMembers.length
+        if (selected === 'Female') {
+            setTotalFemales(totalPeople)
+            setTotalMales(0)
+        } else {
+            setTotalMales(totalPeople)
+            setTotalFemales(0)
+        }
+    }
 
     const handleAddMember = () => {
         setErrorMessage('')
@@ -731,11 +791,14 @@ export default function AccommodationPage() {
         setGroupMembers(updated)
         setNewMemberInput('')
 
-        // Auto-adjust total males count to keep sum matching members
+        // Auto-adjust counts based on selected gender
         const totalPeople = 1 + updated.length
-        const currentF = parseInt(totalFemales, 10) || 0
-        if (currentF <= totalPeople) {
-            setTotalMales(totalPeople - currentF)
+        if (gender === 'Female') {
+            setTotalFemales(totalPeople)
+            setTotalMales(0)
+        } else {
+            setTotalMales(totalPeople)
+            setTotalFemales(0)
         }
     }
 
@@ -745,12 +808,12 @@ export default function AccommodationPage() {
         setGroupMembers(updated)
 
         const totalPeople = 1 + updated.length
-        const currentF = parseInt(totalFemales, 10) || 0
-        if (currentF > totalPeople) {
+        if (gender === 'Female') {
             setTotalFemales(totalPeople)
             setTotalMales(0)
         } else {
-            setTotalMales(totalPeople - currentF)
+            setTotalMales(totalPeople)
+            setTotalFemales(0)
         }
     }
 
@@ -772,8 +835,8 @@ export default function AccommodationPage() {
         }
 
         const allMembers = [activeLead, ...groupMembers]
-        const males = parseInt(totalMales, 10) || 0
-        const females = parseInt(totalFemales, 10) || 0
+        const males = gender === 'Female' ? 0 : allMembers.length
+        const females = gender === 'Female' ? allMembers.length : 0
 
         if (males < 0 || females < 0) {
             setErrorMessage('Male and female counts cannot be negative.')
@@ -862,9 +925,9 @@ export default function AccommodationPage() {
 
     /* ---------- derived values for the live summary ---------- */
     const groupSize = 1 + groupMembers.length
-    const malesN = parseInt(totalMales, 10) || 0
-    const femalesN = parseInt(totalFemales, 10) || 0
-    const countsMatch = malesN + femalesN === groupSize
+    const malesN = gender === 'Female' ? 0 : groupSize
+    const femalesN = gender === 'Female' ? groupSize : 0
+    const countsMatch = true
 
     const startD = new Date(fromDate)
     const endD = new Date(toDate)
@@ -1021,24 +1084,31 @@ export default function AccommodationPage() {
                                     </div>
                                 </div>
 
-                                {/* Head count */}
+                                {/* Gender selection */}
                                 <div className="ac-section">
-                                    <h3 className="ac-section-title">Head count</h3>
-                                    <div className="ac-row-2">
-                                        <div>
-                                            <label className="ac-label" htmlFor="ac-males">Total males *</label>
-                                            <Stepper id="ac-males" value={totalMales} onChange={setTotalMales} />
-                                        </div>
-                                        <div>
-                                            <label className="ac-label" htmlFor="ac-females">Total females *</label>
-                                            <Stepper id="ac-females" value={totalFemales} onChange={setTotalFemales} />
-                                        </div>
+                                    <h3 className="ac-section-title">Gender *</h3>
+                                    <div className="ac-gender-group" role="radiogroup" aria-label="Select gender">
+                                        <label className={`ac-gender-option ${gender === 'Male' ? 'selected' : ''}`}>
+                                            <input
+                                                type="radio"
+                                                name="gender"
+                                                value="Male"
+                                                checked={gender === 'Male'}
+                                                onChange={() => handleGenderChange('Male')}
+                                            />
+                                            <span className="ac-gender-label">Male</span>
+                                        </label>
+                                        <label className={`ac-gender-option ${gender === 'Female' ? 'selected' : ''}`}>
+                                            <input
+                                                type="radio"
+                                                name="gender"
+                                                value="Female"
+                                                checked={gender === 'Female'}
+                                                onChange={() => handleGenderChange('Female')}
+                                            />
+                                            <span className="ac-gender-label">Female</span>
+                                        </label>
                                     </div>
-                                    {!countsMatch && (
-                                        <p className="ac-mismatch">
-                                            Males and females should add up to {groupSize}, the number of people in your group.
-                                        </p>
-                                    )}
                                 </div>
 
                                 {/* Stay */}
@@ -1113,7 +1183,7 @@ export default function AccommodationPage() {
                                 <h3>Your request</h3>
                                 <ul className="ac-summary">
                                     <li><span>Group size</span><span>{groupSize} {groupSize === 1 ? 'person' : 'people'}</span></li>
-                                    <li><span>Males / Females</span><span>{malesN} / {femalesN}</span></li>
+                                    <li><span>Gender</span><span>{gender}</span></li>
                                     <li><span>Check-in</span><span>{fromDate || '-'}</span></li>
                                     <li><span>Check-out</span><span>{toDate || '-'}</span></li>
                                     <li><span>Duration</span><span>{nights > 0 ? `${nights} ${nights === 1 ? 'night' : 'nights'}` : '-'}</span></li>
