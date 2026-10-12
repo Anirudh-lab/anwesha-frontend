@@ -341,7 +341,20 @@ export default function SpecialEventFeature({ event, posterUrl, onOpen }) {
                             alt={title}
                             className="se-poster-img"
                             onError={() => {
-                                if (posterSrc !== '/events/poster.png') {
+                                const eventId = event?.id || event?._id
+                                if (eventId && posterSrc !== '/events/poster.png') {
+                                    const host = process.env.NEXT_PUBLIC_HOST || '/api/backend'
+                                    fetch(`${host}/events/${eventId}/poster?fresh=true`)
+                                        .then(r => r.json())
+                                        .then(data => {
+                                            if (data?.success && data?.url && data.url !== posterSrc) {
+                                                setPosterSrc(data.url)
+                                            } else {
+                                                setPosterSrc('/events/poster.png')
+                                            }
+                                        })
+                                        .catch(() => setPosterSrc('/events/poster.png'))
+                                } else {
                                     setPosterSrc('/events/poster.png')
                                 }
                             }}
