@@ -1,10 +1,9 @@
 .eventPage {
     --gold: #efc867;
-    --gold-deep: #c99635;
     --ink: #f8f0df;
     --muted: #b9adc9;
-    --panel: rgba(255, 255, 255, .045);
-    --line: rgba(239, 200, 103, .18);
+    --panel: rgba(255, 255, 255, .04);
+    --line: rgba(239, 200, 103, .16);
 
     min-height: 100vh;
     padding: 120px 24px 72px;
@@ -21,63 +20,49 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
     padding: 0;
     border: 0;
     background: none;
-    color: var(--gold);
+    color: var(--muted);
     font-size: .95rem;
-    font-weight: 600;
     cursor: pointer;
 }
 
 .backLink:hover {
-    text-decoration: underline;
+    color: var(--gold);
 }
 
 .hero {
-    padding-bottom: 32px;
     margin-bottom: 40px;
-    border-bottom: 1px solid var(--line);
-}
-
-.eyebrow {
-    margin: 0 0 14px;
-    color: var(--gold);
-    font-size: .74rem;
-    font-weight: 700;
-    letter-spacing: .24em;
-    text-transform: uppercase;
 }
 
 .eventTitle {
     margin: 0;
     font-family: 'Cinzel', 'Times New Roman', serif;
-    font-size: clamp(2.3rem, 6vw, 4.6rem);
+    font-size: clamp(2.2rem, 5.5vw, 4.2rem);
     font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: .01em;
+    line-height: 1.1;
     overflow-wrap: anywhere;
 }
 
 .chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin: 22px 0 0;
+    gap: 8px;
+    margin: 18px 0 0;
     padding: 0;
     list-style: none;
 }
 
 .chip {
-    padding: 6px 14px;
-    border: 1px solid rgba(239, 200, 103, .4);
-    border-radius: 999px;
-    color: var(--gold);
-    font-size: .75rem;
-    font-weight: 700;
-    letter-spacing: .12em;
-    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 6px;
+    color: #e6dcc4;
+    background: rgba(239, 200, 103, .12);
+    font-size: .85rem;
+    font-weight: 600;
+    text-transform: capitalize;
 }
 
 .eventBody {
@@ -100,18 +85,16 @@
     width: 100%;
     aspect-ratio: 4 / 5;
     object-fit: cover;
-    border-radius: 20px;
+    border-radius: 14px;
     background: #171326;
-    box-shadow: 0 22px 50px rgba(0, 0, 0, .45);
 }
 
 .registerCard {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 22px;
-    border: 1px solid var(--line);
-    border-radius: 18px;
+    padding: 20px;
+    border-radius: 14px;
     background: var(--panel);
 }
 
@@ -124,45 +107,45 @@
 
 .feeRow span {
     color: var(--muted);
-    font-size: .8rem;
-    letter-spacing: .14em;
-    text-transform: uppercase;
+    font-size: .95rem;
 }
 
 .feeRow strong {
     color: var(--gold);
-    font-size: 1.7rem;
+    font-size: 1.6rem;
 }
 
 .deadline {
     margin: 0;
     color: var(--muted);
-    font-size: .92rem;
+    font-size: .9rem;
 }
 
 .registerButton,
 .secondaryButton {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     width: 100%;
-    padding: 15px 18px;
-    border-radius: 12px;
+    padding: 14px 18px;
+    border-radius: 10px;
     font-size: 1rem;
-    font-weight: 800;
+    font-weight: 700;
     text-align: center;
     text-decoration: none;
     cursor: pointer;
-    transition: transform .15s ease, filter .15s ease, background .15s ease;
+    transition: filter .15s ease, background .15s ease;
 }
 
 .registerButton {
     border: 0;
     color: #1b1126;
-    background: linear-gradient(135deg, #f5d67e, var(--gold-deep));
+    background: var(--gold);
 }
 
 .registerButton:hover:not(:disabled) {
-    filter: brightness(1.06);
-    transform: translateY(-1px);
+    filter: brightness(1.08);
 }
 
 .registerButton:disabled {
@@ -172,13 +155,13 @@
 }
 
 .secondaryButton {
-    border: 1px solid rgba(239, 200, 103, .45);
+    border: 1px solid rgba(239, 200, 103, .4);
     color: var(--gold);
     background: transparent;
 }
 
 .secondaryButton:hover {
-    background: rgba(239, 200, 103, .1);
+    background: rgba(239, 200, 103, .08);
 }
 
 .eventInfo {
@@ -187,26 +170,29 @@
 
 .facts {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 14px;
-    margin: 0 0 44px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 32px;
+    margin: 0 0 36px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--line);
 }
 
 .fact {
-    padding: 16px 18px;
-    border: 1px solid var(--line);
-    border-left: 3px solid var(--gold);
-    border-radius: 12px;
-    background: var(--panel);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.factIcon {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: var(--gold);
 }
 
 .fact dt {
-    margin-bottom: 6px;
+    margin-bottom: 2px;
     color: var(--muted);
-    font-size: .72rem;
-    font-weight: 700;
-    letter-spacing: .16em;
-    text-transform: uppercase;
+    font-size: .85rem;
 }
 
 .fact dd {
@@ -217,16 +203,14 @@
 }
 
 .section + .section {
-    margin-top: 44px;
+    margin-top: 40px;
 }
 
 .section h2 {
-    margin: 0 0 18px;
-    color: var(--gold);
-    font-family: 'Cinzel', 'Times New Roman', serif;
-    font-size: 1.35rem;
+    margin: 0 0 16px;
+    color: var(--ink);
+    font-size: 1.3rem;
     font-weight: 700;
-    letter-spacing: .04em;
 }
 
 .description {
@@ -248,7 +232,6 @@
     color: var(--ink);
     font-family: inherit;
     font-size: 1.12rem;
-    letter-spacing: 0;
 }
 
 .description ul,
@@ -270,9 +253,6 @@
 }
 
 .organizers {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-    gap: 14px;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -280,47 +260,35 @@
 
 .organizer {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 14px;
-    padding: 16px;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    background: var(--panel);
-}
-
-.avatar {
-    display: inline-flex;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    color: #1b1126;
-    background: linear-gradient(135deg, #f5d67e, var(--gold-deep));
-    font-weight: 800;
+    justify-content: space-between;
+    gap: 6px 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
 }
 
 .organizerName {
-    margin: 0;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .organizerPhone {
-    color: var(--muted);
-    font-size: .92rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--gold);
+    font-size: .95rem;
     text-decoration: none;
 }
 
 .organizerPhone:hover {
-    color: var(--gold);
+    text-decoration: underline;
 }
 
 .resultCard {
     max-width: 640px;
-    padding: 32px;
-    border: 1px solid var(--line);
-    border-radius: 20px;
+    padding: 28px;
+    border-radius: 14px;
     background: var(--panel);
 }
 
@@ -358,7 +326,7 @@
 .resultActions .registerButton,
 .resultActions .secondaryButton {
     width: auto;
-    padding: 13px 24px;
+    padding: 12px 22px;
 }
 
 .state {
@@ -387,21 +355,6 @@
     padding: 12px 24px;
 }
 
-.spinner {
-    width: 36px;
-    height: 36px;
-    border: 3px solid rgba(239, 200, 103, .2);
-    border-top-color: var(--gold);
-    border-radius: 50%;
-    animation: spin .8s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
 @media (max-width: 900px) {
     .eventBody {
         grid-template-columns: 1fr;
@@ -423,19 +376,14 @@
 
     .hero {
         margin-bottom: 28px;
-        padding-bottom: 24px;
     }
 
     .facts {
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-    }
-
-    .fact {
-        padding: 12px 14px;
+        grid-template-columns: 1fr;
+        gap: 16px;
     }
 
     .fact dd {
-        font-size: .95rem;
+        font-size: .98rem;
     }
 }

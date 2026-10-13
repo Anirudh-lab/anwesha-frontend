@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { AuthContext } from '../components/authContext'
 import styles from '../styles/profile.module.css'
+import { ButtonLoader } from '../components/Loader'
 import {
     ID_CARD_TYPES,
     requestUploadUrl,
@@ -345,7 +346,9 @@ export default function SubmitId() {
                                             onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
                                             onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                                         >
-                                            {submitting ? 'Submitting...' : 'Submit for Review'}
+                                            <ButtonLoader loading={submitting} label="Submitting">
+                                                Submit for Review
+                                            </ButtonLoader>
                                         </button>
                                     </form>
                                 )}

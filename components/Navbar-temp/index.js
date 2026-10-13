@@ -5,6 +5,7 @@ import { useState, useContext, useEffect, useRef } from 'react'
 import { AuthContext } from '../authContext'
 import { useRouter } from 'next/router'
 import Logo from '../Rive/logo'
+import { ButtonLoader } from '../Loader'
 import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
 const host = process.env.NEXT_PUBLIC_HOST || '/api/backend'
 const STATE_MACHINE_NAME = 'Basic State Machine'
@@ -16,6 +17,7 @@ const cn = (...classes) => {
 function Navigation() {
     const userData = useContext(AuthContext)
     const [drawerOpen, setDrawerOpen] = useState(false)
+    const [loggingOut, setLoggingOut] = useState(false)
     const [clickInputFired, setClickInputFired] = useState(false)
     const router = useRouter()
     const [isHome, setIsHome] = useState(['/'].includes(router.pathname))
@@ -100,12 +102,14 @@ function Navigation() {
     }
 
     const handleLogout = () => {
+        if (loggingOut) return
         const authHeaders = userData?.getAuthHeaders
             ? userData.getAuthHeaders()
             : {}
         
         // Call backend logout if token exists
         if (userData?.token) {
+            setLoggingOut(true)
             fetch(`${host}/user/logout`, {
                 method: 'POST',
                 headers: {
@@ -124,6 +128,7 @@ function Navigation() {
                     // Clear token and user from context regardless of API success
                     userData.logout()
                     router.push('/userLogin')
+                    setLoggingOut(false)
                 })
         } else {
             // No token, just clear locally
@@ -428,8 +433,9 @@ function Navigation() {
                                     styles.sexy_button_small
                                 )}
                                 onClick={handleLogout}
+                                disabled={loggingOut}
                             >
-                                Log Out
+                                <ButtonLoader loading={loggingOut} label="Logging out">Log Out</ButtonLoader>
                             </button>
                         </div>
                     )}

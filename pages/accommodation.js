@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { AuthContext } from '../components/authContext'
 import { toast } from 'react-toastify'
 import { motion, useReducedMotion } from 'framer-motion'
+import { ButtonLoader } from '../components/Loader'
 
 const host = process.env.NEXT_PUBLIC_HOST || '/api/backend'
 const GOLD = '#F2BF51'
@@ -1102,7 +1103,9 @@ export default function AccommodationPage() {
                                 </div>
 
                                 <button type="submit" className="ac-btn-primary" disabled={loading}>
-                                    {loading ? 'Submitting request...' : 'Submit accommodation request'}
+                                    <ButtonLoader loading={loading} label="Submitting request">
+                                        Submit accommodation request
+                                    </ButtonLoader>
                                 </button>
                             </form>
                         </motion.div>

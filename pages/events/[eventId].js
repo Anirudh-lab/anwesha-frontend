@@ -4,6 +4,8 @@ import Head from 'next/head'
 import { AuthContext } from '../../components/authContext'
 import { soloEventRegistrationNew } from '../../components/Event Registration/soloEventRegistration'
 import { ToastContainer, toast } from 'react-toastify'
+import { ArrowLeft, CalendarDays, Clock, FileText, MapPin, Phone, PlayCircle, Trophy, Users } from 'lucide-react'
+import Loader, { ButtonLoader } from '../../components/Loader'
 import styles from '../../styles/event-details.module.css'
 
 const IST = { timeZone: 'Asia/Kolkata' }
@@ -29,7 +31,7 @@ const getSchedule = (start, end) => {
 
 const formatPrize = (prize) => {
     const value = String(prize ?? '').trim()
-    if (!value || value === '0') return null
+    if (!value || /^(₹|rs\.?|inr)?\s*0+([.,]0+)?\s*(\/-)?$/i.test(value)) return null
     if (/^\d[\d,]*$/.test(value)) return `₹${Number(value.replace(/,/g, '')).toLocaleString('en-IN')}`
     return value
 }
@@ -225,10 +227,7 @@ const EventDetailsPage = () => {
     if (loading) {
         return (
             <div className={styles.eventPage}>
-                <div className={styles.state}>
-                    <span className={styles.spinner} aria-hidden="true" />
-                    Loading event…
-                </div>
+                <Loader label="Loading event…" fullPage />
             </div>
         )
     }
@@ -273,13 +272,13 @@ const EventDetailsPage = () => {
     ].filter(Boolean)
 
     const facts = [
-        schedule && { label: 'Date', value: schedule.date },
-        schedule && { label: 'Time', value: schedule.time },
-        !schedule && event.Date && { label: 'Date', value: event.Date },
-        !schedule && event.Time && { label: 'Time', value: event.Time },
-        venue && { label: 'Venue', value: venue },
-        teamSize && { label: 'Team size', value: teamSize },
-        prize && { label: 'Prizes', value: prize },
+        schedule && { label: 'Date', value: schedule.date, Icon: CalendarDays },
+        schedule && { label: 'Time', value: schedule.time, Icon: Clock },
+        !schedule && event.Date && { label: 'Date', value: event.Date, Icon: CalendarDays },
+        !schedule && event.Time && { label: 'Time', value: event.Time, Icon: Clock },
+        venue && { label: 'Venue', value: venue, Icon: MapPin },
+        teamSize && { label: 'Team size', value: teamSize, Icon: Users },
+        prize && { label: 'Prizes', value: prize, Icon: Trophy },
     ].filter(Boolean)
 
     return (
@@ -294,11 +293,11 @@ const EventDetailsPage = () => {
             <div className={styles.eventPage}>
                 <div className={styles.eventShell}>
                     <button className={styles.backLink} onClick={() => router.push('/events')}>
-                        ← All events
+                        <ArrowLeft size={16} aria-hidden="true" />
+                        All events
                     </button>
 
                     <header className={styles.hero}>
-                        <p className={styles.eyebrow}>Anwesha 2027 · Event details</p>
                         <h1 className={styles.eventTitle}>{title}</h1>
                         {chips.length > 0 && (
                             <ul className={styles.chips}>
@@ -376,10 +375,13 @@ const EventDetailsPage = () => {
                                         onClick={handleRagister}
                                         disabled={isRegistering || registrationClosed}
                                     >
-                                        {registrationClosed ? 'Registration closed' : isRegistering ? 'Processing…' : 'Register now'}
+                                        {registrationClosed ? 'Registration closed' : (
+                                            <ButtonLoader loading={isRegistering} label="Registering…">Register now</ButtonLoader>
+                                        )}
                                     </button>
                                     {event.video && (
                                         <a className={styles.secondaryButton} target="_blank" rel="noreferrer" href={event.video}>
+                                            {mediaLabel === 'Rulebook' ? <FileText size={18} aria-hidden="true" /> : <PlayCircle size={18} aria-hidden="true" />}
                                             {mediaLabel}
                                         </a>
                                     )}
@@ -389,10 +391,13 @@ const EventDetailsPage = () => {
                             <div className={styles.eventInfo}>
                                 {facts.length > 0 && (
                                     <dl className={styles.facts}>
-                                        {facts.map((fact) => (
-                                            <div key={fact.label} className={styles.fact}>
-                                                <dt>{fact.label}</dt>
-                                                <dd>{fact.value}</dd>
+                                        {facts.map(({ label, value, Icon }) => (
+                                            <div key={label} className={styles.fact}>
+                                                <Icon className={styles.factIcon} size={22} strokeWidth={1.6} aria-hidden="true" />
+                                                <div>
+                                                    <dt>{label}</dt>
+                                                    <dd>{value}</dd>
+                                                </div>
                                             </div>
                                         ))}
                                     </dl>
@@ -411,17 +416,13 @@ const EventDetailsPage = () => {
                                         <ul className={styles.organizers}>
                                             {organizers.map((person) => (
                                                 <li key={`${person.name}-${person.phone}`} className={styles.organizer}>
-                                                    <span className={styles.avatar} aria-hidden="true">
-                                                        {person.name.charAt(0).toUpperCase()}
-                                                    </span>
-                                                    <div>
-                                                        <p className={styles.organizerName}>{person.name}</p>
-                                                        {person.phone && (
-                                                            <a className={styles.organizerPhone} href={`tel:${person.phone}`}>
-                                                                {person.phone}
-                                                            </a>
-                                                        )}
-                                                    </div>
+                                                    <span className={styles.organizerName}>{person.name}</span>
+                                                    {person.phone && (
+                                                        <a className={styles.organizerPhone} href={`tel:${person.phone}`}>
+                                                            <Phone size={15} aria-hidden="true" />
+                                                            {person.phone}
+                                                        </a>
+                                                    )}
                                                 </li>
                                             ))}
                                         </ul>

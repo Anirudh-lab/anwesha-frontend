@@ -4,6 +4,7 @@ import {
     teamEventRegistrationNew,
 } from '../../components/Event Registration/teamEventRegistration'
 import styles from '../../styles/EventRegistration.module.css'
+import { ButtonLoader } from '../../components/Loader'
 import { AuthContext } from '../../components/authContext'
 import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
@@ -195,7 +196,7 @@ const EventRegistration = () => {
                                         type='submit'
                                         disabled={isSubmitting}
                                     >
-                                        {isSubmitting ? 'REGISTERING...' : 'REGISTER'}
+                                        <ButtonLoader loading={isSubmitting} label='REGISTERING'>REGISTER</ButtonLoader>
                                     </button>
                                 </div>
                             </motion.div>

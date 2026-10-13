@@ -12,6 +12,7 @@ import { motion, wrap } from 'framer-motion'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Link from 'next/link'
+import Loader, { ButtonLoader } from '../components/Loader'
 
 const host = process.env.NEXT_PUBLIC_HOST || '/api/backend'
 
@@ -280,7 +281,11 @@ function Profile() {
     }
 
     if (!userData?.state?.user) {
-        return null
+        return (
+            <div className={styles.mainContainer}>
+                <Loader label="Loading your profile…" fullPage />
+            </div>
+        )
     }
 
 
@@ -399,8 +404,10 @@ function Profile() {
                                             onChange={handlePhotoUpload}
                                             disabled={uploadingPhoto}
                                         />
-                                        <label htmlFor="photo-upload" style={{ position: 'absolute', bottom: 10, right: 30, background: 'white', borderRadius: '50%', padding: '5px', cursor: 'pointer', zIndex: 20 }}>
-                                            {uploadingPhoto ? '⏳' : '📷'}
+                                        <label htmlFor="photo-upload" style={{ position: 'absolute', bottom: 10, right: 30, background: 'white', borderRadius: '50%', padding: '5px', cursor: 'pointer', zIndex: 20, color: '#000' }}>
+                                            <ButtonLoader loading={uploadingPhoto} label="">
+                                                📷
+                                            </ButtonLoader>
                                         </label>
                                     </>
                                 )}
@@ -987,7 +994,9 @@ function Profile() {
                                                 opacity: profileSaving ? 0.7 : 1,
                                             }}
                                         >
-                                            {profileSaving ? 'Saving...' : 'Save Changes'}
+                                            <ButtonLoader loading={profileSaving} label="Saving">
+                                                Save Changes
+                                            </ButtonLoader>
                                         </motion.button>
                                     </div>
                                 </form>
