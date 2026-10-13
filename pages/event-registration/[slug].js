@@ -7,6 +7,7 @@ import styles from '../../styles/EventRegistration.module.css'
 import { AuthContext } from '../../components/authContext'
 import { useRouter } from 'next/router'
 import { motion } from 'framer-motion'
+import Head from 'next/head'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
  
@@ -81,6 +82,10 @@ const EventRegistration = () => {
 
     return (
         <div>
+            <Head>
+                <title>{name ? `${name.split('#')[0]} Registration - Anwesha 2027` : 'Event Registration - Anwesha 2027'}</title>
+                <link rel="icon" href="/logo_no_bg.svg" />
+            </Head>
             <div className={styles.container}>
                 <div className={styles.effectcontainer}>
                     <div className={styles.content}>
