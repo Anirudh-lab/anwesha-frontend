@@ -52,6 +52,7 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <meta charSet="utf-8" />
+        <link rel="icon" href="/logo_no_bg.svg" />
         <meta name="description" content="Official cultural fest of IIT Patna - Anwesha 2027. East India's premier annual cultural extravaganza featuring Pronites, star concerts, cultural competitions, workshops, and exhibitions." />
         <meta name="keywords" content="Anwesha, Anwesha 2027, IIT Patna, Cultural Fest, IITP Anwesha, Pronite, Fest Passes, Competitions, Workshops, College Festival, Bihar, East India Fest, Anwesha IITP" />
         <meta name="author" content="Anwesha IIT Patna" />

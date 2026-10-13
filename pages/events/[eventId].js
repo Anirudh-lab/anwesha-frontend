@@ -203,11 +203,27 @@ const EventDetailsPage = () => {
     }
 
     if (loading) {
-        return <div style={{ color: 'white', textAlign: 'center', marginTop: '100px', fontSize: '24px' }}>Loading...</div>
+        return (
+            <>
+                <Head>
+                    <title>Loading Event - Anwesha 2027</title>
+                    <link rel="icon" href="/logo_no_bg.svg" />
+                </Head>
+                <div style={{ color: 'white', textAlign: 'center', marginTop: '100px', fontSize: '24px' }}>Loading...</div>
+            </>
+        )
     }
 
     if (!event) {
-        return <div style={{ color: 'white', textAlign: 'center', marginTop: '100px', fontSize: '24px' }}>Event not found</div>
+        return (
+            <>
+                <Head>
+                    <title>Event Not Found - Anwesha 2027</title>
+                    <link rel="icon" href="/logo_no_bg.svg" />
+                </Head>
+                <div style={{ color: 'white', textAlign: 'center', marginTop: '100px', fontSize: '24px' }}>Event not found</div>
+            </>
+        )
     }
 
     let description = (event.description || '').replace(/\\n/g, '<br />');
@@ -220,6 +236,7 @@ const EventDetailsPage = () => {
         <React.StrictMode>
             <Head>
                 <title>{title ? `${title} - Anwesha 2027 | IIT Patna` : 'Event Details - Anwesha 2027'}</title>
+                <link rel="icon" href="/logo_no_bg.svg" />
                 {cleanDesc && <meta name="description" content={cleanDesc} />}
                 <link rel="canonical" href={eventUrl} />
                 <meta property="og:title" content={`${title} - Anwesha 2027 | IIT Patna`} />
@@ -382,7 +399,7 @@ const EventDetailsPage = () => {
                                                 {event.organizer.map((e, index) => (
                                                     <li key={index} style={{ marginBottom: '10px' }}>
                                                         <span style={{ fontWeight: 'bold' }}>{e[0]}</span>
-                                                        {e[1] && <span style={{ marginLeft: '10px' }}><a href={`tel:${e[1]}`} style={{ color: '#aaa', textDecoration: 'none' }}>{e[1]}</a></span>}
+                                                        {e[1] && <span style={{ marginLeft: '10px', color: '#aaa' }}>{e[1]}</span>}
                                                     </li>
                                                 ))}
                                             </ul>

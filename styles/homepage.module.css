@@ -388,8 +388,8 @@
     }
 
     .hero_text>img {
-        width: calc(407px / 1.2);
-        height: calc(189px / 1.2);
+        width: min(90vw, 420px);
+        height: auto;
         margin-top: 12px;
     }
 
