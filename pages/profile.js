@@ -380,19 +380,20 @@ function Profile() {
                                 alignItems: 'center',
                             }}
                         >
-                            <div className={styles.userImage} style={{ position: 'relative' }}>
+                            <div className={styles.userImage}>
                                 <img
                                     src={'/home/circle.png'}
                                     width={180}
                                     height={180}
                                     alt="userImage"
+                                    className={styles.userCircleFrame}
                                 />
                                 <img
                                     src={profDetails.profile_photo_url || '/home/mascott.png'}
                                     width={150}
                                     height={150}
                                     alt="userImage"
-                                    style={{ borderRadius: '50%', objectFit: 'cover', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 10 }}
+                                    className={styles.userAvatar}
                                 />
                                 {profDetails.id_card_status !== 'VERIFIED' && (
                                     <>
@@ -404,7 +405,7 @@ function Profile() {
                                             onChange={handlePhotoUpload}
                                             disabled={uploadingPhoto}
                                         />
-                                        <label htmlFor="photo-upload" style={{ position: 'absolute', bottom: 10, right: 30, background: 'white', borderRadius: '50%', padding: '5px', cursor: 'pointer', zIndex: 20, color: '#000' }}>
+                                        <label htmlFor="photo-upload" className={styles.photoUploadLabel} title="Upload Profile Picture">
                                             <ButtonLoader loading={uploadingPhoto} label="">
                                                 📷
                                             </ButtonLoader>

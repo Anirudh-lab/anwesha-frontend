@@ -173,11 +173,11 @@ const Events = () => {
                 const data = await res.json()
                 const eventsArray = Array.isArray(data) ? data : (data.events || [])
                 const normalized = eventsArray.map((ev) => ({
-                        ...ev,
-                        poster: makePosterUrl(ev.poster_url || ev.poster || ev.poster_file),
-                        poster_url: makePosterUrl(ev.poster_url || ev.poster || ev.poster_file),
-                        name: ev.name || ev["Event Name"] || '',
-                    }))
+                    ...ev,
+                    poster: makePosterUrl(ev.poster_url || ev.poster || ev.poster_file),
+                    poster_url: makePosterUrl(ev.poster_url || ev.poster || ev.poster_file),
+                    name: ev.name || ev["Event Name"] || '',
+                }))
                 setEvents(normalized)
                 setFilteredEvents(normalized)
 
@@ -250,13 +250,13 @@ const Events = () => {
 
             <div className={styles.container}>
                 <div className={styles.titleBox}>
-                    <div className={styles.titleText}>EXPLORE THE EVENTS</div>
+                    <div className={styles.titleText}>COMING SOON...</div>
                 </div>
                 {loading ? (
                     <Loader label="Loading events…" fullPage />
                 ) : events.length === 0 ? (
                     <div style={{ color: 'white', fontSize: '24px', textAlign: 'center', width: '100%', margin: '40px 0' }}>
-                        Currently there are no events or we are not accepting registration
+                        {/* ADD SOMETHING */}
                     </div>
                 ) : (
                     <>
@@ -273,65 +273,65 @@ const Events = () => {
                             </div>
                         </div>
 
-                {/* Featured Events Section - Below Search Bar on First Page */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-                    {isSearching && searchResults.length === 0 && (
-                        <div style={{ color: 'white', fontSize: '24px', textAlign: 'center', width: '100%', marginBottom: '5px' , marginTop:'20px' }}>
-                            No events found
+                        {/* Featured Events Section - Below Search Bar on First Page */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                            {isSearching && searchResults.length === 0 && (
+                                <div style={{ color: 'white', fontSize: '24px', textAlign: 'center', width: '100%', marginBottom: '5px', marginTop: '20px' }}>
+                                    No events found
+                                </div>
+                            )}
+                            <div className={styles.featuredEventsSection}>
+                                {isSearching && searchResults.length > 0 ? (
+                                    // Show search results
+                                    searchResults.slice(0, 3).map((item, idx) => (
+                                        <div key={idx} className={styles.featuredCard} style={{ filter: 'grayscale(100%)' }}>
+                                            <Card
+                                                onClick={() => window.open(`/events/${item.id || item._id}`, '_blank')}
+                                                event={item}
+                                                closeHandler={closeModal}
+                                            />
+                                        </div>
+                                    ))
+                                ) : (
+                                    // Default 3 featured cards (shown when not searching OR when no results)
+                                    <>
+                                        {specialEvents.slice(0, 3).map((item, idx) => (
+                                            <div key={idx} className={styles.featuredCard} style={{ filter: 'grayscale(100%)' }}>
+                                                <Card
+                                                    onClick={() => window.open(`/events/${item.id || item._id}`, '_blank')}
+                                                    event={item}
+                                                    closeHandler={closeModal}
+                                                />
+                                            </div>
+                                        ))}
+                                    </>
+                                )}
+                                <div className={styles.hero_button}>
+                                    <button
+                                        className={styles.sexy_button}
+                                        onClick={() => window.open('/Anwesha_26_EVENTS_RULEBOOK.pdf', '_blank')}
+                                    >
+                                        Rulebook
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    )}
-                    <div className={styles.featuredEventsSection}>
-                        {isSearching && searchResults.length > 0 ? (
-                            // Show search results
-                            searchResults.slice(0, 3).map((item, idx) => (
-                                <div key={idx} className={styles.featuredCard} style={{ filter: 'grayscale(100%)' }}>
+
+
+                        <div className={styles.eventsPanel}>
+                            <div className={styles.eventsPanelTitle}>EVENTS</div>
+                            <div className={styles.cardContainer}>
+                                {events.map((item, idx) => (
                                     <Card
                                         onClick={() => window.open(`/events/${item.id || item._id}`, '_blank')}
+                                        key={idx}
                                         event={item}
                                         closeHandler={closeModal}
                                     />
-                                </div>
-                            ))
-                        ) : (
-                            // Default 3 featured cards (shown when not searching OR when no results)
-                            <>
-                                {specialEvents.slice(0, 3).map((item, idx) => (
-                                    <div key={idx} className={styles.featuredCard} style={{ filter: 'grayscale(100%)' }}>
-                                        <Card
-                                            onClick={() => window.open(`/events/${item.id || item._id}`, '_blank')}
-                                            event={item}
-                                            closeHandler={closeModal}
-                                        />
-                                    </div>
                                 ))}
-                            </>
-                        )}
-                        <div className={styles.hero_button}>
-                            <button
-                                className={styles.sexy_button}
-                                onClick={() => window.open('/Anwesha_26_EVENTS_RULEBOOK.pdf', '_blank')}
-                            >
-                                Rulebook
-                            </button>
+                            </div>
                         </div>
-                    </div>
-                </div>
-
-
-                <div className={styles.eventsPanel}>
-                    <div className={styles.eventsPanelTitle}>EVENTS</div>
-                    <div className={styles.cardContainer}>
-                        {events.map((item, idx) => (
-                            <Card
-                                onClick={() => window.open(`/events/${item.id || item._id}`, '_blank')}
-                                key={idx}
-                                event={item}
-                                closeHandler={closeModal}
-                            />
-                        ))}
-                    </div>
-                </div>
-                </>
+                    </>
                 )}
                 {isModalOpen && (
                     <Modal

@@ -106,7 +106,7 @@ function Navigation() {
         const authHeaders = userData?.getAuthHeaders
             ? userData.getAuthHeaders()
             : {}
-        
+
         // Call backend logout if token exists
         if (userData?.token) {
             setLoggingOut(true)
@@ -506,11 +506,11 @@ function Navigation() {
                             Merch
                         </Link>
                     </li> */}
-                    <li>
+                    {/* <li>
                         <Link href="/ourteam" onClick={() => toggleDrawer()}>
                             Teams
                         </Link>
-                    </li>
+                    </li> */}
 
                     <li>
                         <Link
@@ -532,7 +532,7 @@ function Navigation() {
                     </li>
                     <li>
                         <Link href="/anweshapass" onClick={() => toggleDrawer()}>
-                            getPasses
+                            Get Passes
                         </Link>
                     </li>
                     <li>

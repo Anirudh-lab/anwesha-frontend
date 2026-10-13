@@ -95,7 +95,15 @@ const EventDetailsPage = () => {
                 })
                 const data = await res.json()
                 const eventsArray = Array.isArray(data) ? data : (data.events || [])
-                let foundEvent = eventsArray.find(e => e.id === eventId || e._id === eventId)
+                const targetIdLower = String(eventId || '').toLowerCase().replace(/[\s_-]+/g, '')
+                const matchesEvent = (e) => {
+                    if (!e) return false
+                    if (e.id === eventId || e._id === eventId) return true
+                    const name = (e.name || e['Event Name'] || e['Event'] || '').toLowerCase().replace(/[\s_-]+/g, '')
+                    return Boolean(name && name === targetIdLower)
+                }
+
+                let foundEvent = eventsArray.find(matchesEvent)
                 
                 if (!foundEvent) {
                     // Try special events
@@ -105,7 +113,7 @@ const EventDetailsPage = () => {
                     })
                     const specialData = await specialRes.json()
                     const specialList = Array.isArray(specialData) ? specialData : (specialData.events || specialData.special_events || specialData.specialEvents || specialData.data || [])
-                    foundEvent = specialList.find(e => e.id === eventId || e._id === eventId)
+                    foundEvent = specialList.find(matchesEvent)
                 }
 
                 if (!foundEvent) {
@@ -117,6 +125,21 @@ const EventDetailsPage = () => {
                     if (singleRes.ok) {
                         const singleData = await singleRes.json()
                         foundEvent = singleData.event || singleData.data || singleData
+                    }
+                }
+
+                if (!foundEvent) {
+                    // Fallback to local events_data.json
+                    try {
+                        const localRes = await fetch('/events/events_data.json')
+                        if (localRes.ok) {
+                            const localData = await localRes.json()
+                            if (Array.isArray(localData)) {
+                                foundEvent = localData.find(matchesEvent)
+                            }
+                        }
+                    } catch {
+                        // ignore fallback error
                     }
                 }
 
@@ -226,23 +249,35 @@ const EventDetailsPage = () => {
 
     if (loading) {
         return (
-            <div className={styles.eventPage}>
-                <Loader label="Loading event…" fullPage />
-            </div>
+            <>
+                <Head>
+                    <title>Loading Event - Anwesha 2027</title>
+                    <link rel="icon" href="/logo_no_bg.svg" />
+                </Head>
+                <div className={styles.eventPage}>
+                    <Loader label="Loading event…" fullPage />
+                </div>
+            </>
         )
     }
 
     if (!event) {
         return (
-            <div className={styles.eventPage}>
-                <div className={styles.state}>
-                    <h1>Event not found</h1>
-                    <p>This event may have been moved or is no longer available.</p>
-                    <button className={styles.secondaryButton} onClick={() => router.push('/events')}>
-                        Browse all events
-                    </button>
+            <>
+                <Head>
+                    <title>Event Not Found - Anwesha 2027</title>
+                    <link rel="icon" href="/logo_no_bg.svg" />
+                </Head>
+                <div className={styles.eventPage}>
+                    <div className={styles.state}>
+                        <h1>Event not found</h1>
+                        <p>This event may have been moved or is no longer available.</p>
+                        <button className={styles.secondaryButton} onClick={() => router.push('/events')}>
+                            Browse all events
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </>
         )
     }
 
@@ -280,11 +315,25 @@ const EventDetailsPage = () => {
         teamSize && { label: 'Team size', value: teamSize, Icon: Users },
         prize && { label: 'Prizes', value: prize, Icon: Trophy },
     ].filter(Boolean)
+    const cleanDesc = (event.description || event.Description || '').replace(/<[^>]*>?/gm, '').slice(0, 160)
+    const eventUrl = `https://anwesha.iitp.ac.in/events/${eventId}`
+    const posterImg = event.poster_url || event.poster || '/home/logo.png'
 
     return (
         <>
             <Head>
-                <title>{`${title} - Anwesha 2027`}</title>
+                <title>{title ? `${title} - Anwesha 2027 | IIT Patna` : 'Event Details - Anwesha 2027'}</title>
+                <link rel="icon" href="/logo_no_bg.svg" />
+                {cleanDesc && <meta name="description" content={cleanDesc} />}
+                <link rel="canonical" href={eventUrl} />
+                <meta property="og:title" content={`${title} - Anwesha 2027 | IIT Patna`} />
+                {cleanDesc && <meta property="og:description" content={cleanDesc} />}
+                <meta property="og:url" content={eventUrl} />
+                <meta property="og:type" content="website" />
+                <meta property="og:image" content={posterImg.startsWith('http') ? posterImg : `https://anwesha.iitp.ac.in${posterImg.startsWith('/') ? '' : '/'}${posterImg}`} />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={`${title} - Anwesha 2027 | IIT Patna`} />
+                {cleanDesc && <meta name="twitter:description" content={cleanDesc} />}
                 <link
                     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap"
                     rel="stylesheet"
@@ -418,10 +467,10 @@ const EventDetailsPage = () => {
                                                 <li key={`${person.name}-${person.phone}`} className={styles.organizer}>
                                                     <span className={styles.organizerName}>{person.name}</span>
                                                     {person.phone && (
-                                                        <a className={styles.organizerPhone} href={`tel:${person.phone}`}>
+                                                        <span className={styles.organizerPhone}>
                                                             <Phone size={15} aria-hidden="true" />
                                                             {person.phone}
-                                                        </a>
+                                                        </span>
                                                     )}
                                                 </li>
                                             ))}

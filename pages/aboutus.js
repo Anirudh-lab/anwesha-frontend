@@ -4,7 +4,7 @@ const Aboutus = () => {
     return (
         <div className={styles.parentcontainer}>
             <h2 className={styles.head}>
-                Anwesha&#39;26
+                Anwesha&#39;27
             </h2>
             <div className={styles.sec}>
                 <br />
@@ -98,7 +98,7 @@ const Aboutus = () => {
                             The folk culture in Bihar is immense - from
                             Madhubani to Yampuri, Jat-Jatin to bamboo & pottery
                             craft; we would be delighted to accommodate it all
-                            in Anwesha 2k26.
+                            in Anwesha 2k27.
                         </p>
                     </li>
                 </ul>
