@@ -152,7 +152,7 @@ export default function SubmitId() {
             notify('error', msg)
             return
         }
-        const collegeFileErr = validateIdFile(collegeIdFile)
+        const collegeFileErr = validateIdFile(collegeIdFile, 'college_id')
         if (collegeFileErr) {
             const msg = `College ID: ${collegeFileErr}`
             setFormError(msg)
@@ -174,7 +174,7 @@ export default function SubmitId() {
             notify('error', msg)
             return
         }
-        const aadharFileErr = validateIdFile(aadharIdFile)
+        const aadharFileErr = validateIdFile(aadharIdFile, 'aadhar_id')
         if (aadharFileErr) {
             const msg = `Aadhar Card: ${aadharFileErr}`
             setFormError(msg)
@@ -436,7 +436,7 @@ export default function SubmitId() {
                                                 <label style={{ color: '#F2BF51', fontSize: '1rem', fontWeight: 'bold' }}>
                                                     College ID Document *{' '}
                                                     <span style={{ color: '#999', fontWeight: 'normal', fontSize: '0.85rem' }}>
-                                                        (PDF only, max 5MB)
+                                                        (PNG, JPG, JPEG, max 5MB)
                                                     </span>
                                                 </label>
                                                 <div
@@ -458,7 +458,7 @@ export default function SubmitId() {
                                                 >
                                                     <input
                                                         type="file"
-                                                        accept="application/pdf"
+                                                        accept="image/png, image/jpeg, image/jpg"
                                                         onChange={handleFileChangeCollege}
                                                         disabled={submitting}
                                                         style={{
@@ -482,7 +482,7 @@ export default function SubmitId() {
                                                             strokeLinecap="round"
                                                             strokeLinejoin="round"
                                                             strokeWidth={2}
-                                                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                                                         />
                                                     </svg>
                                                     {collegeIdFile ? (
@@ -492,7 +492,7 @@ export default function SubmitId() {
                                                         </p>
                                                     ) : (
                                                         <p style={{ color: '#bbb', fontSize: '0.95rem', margin: 0 }}>
-                                                            Drag & drop College ID <strong style={{ color: '#F2BF51' }}>PDF</strong> here, or click to browse
+                                                            Drag & drop College ID <strong style={{ color: '#F2BF51' }}>image (PNG, JPG, JPEG)</strong> here, or click to browse
                                                         </p>
                                                     )}
                                                 </div>
