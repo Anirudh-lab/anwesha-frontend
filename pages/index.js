@@ -905,9 +905,10 @@ const IndexPage = () => {
             {countdownTimer && <CountdownTimer />}
 
             <Head>
-                <title>Anwesha 2027</title>
-                <meta name="description" content="Anwesha 2027" />
-                <link rel="icon" href="./logo_no_bg.svg" />
+                <title>Anwesha 2027 | Annual Socio-Cultural Festival | IIT Patna</title>
+                <meta name="description" content="Anwesha 2027 is the annual socio-cultural festival of IIT Patna featuring Pronites, star concerts, cultural competitions, exhibitions, and workshops." />
+                <link rel="icon" href="/logo_no_bg.svg" />
+                <link rel="canonical" href="https://anwesha.iitp.ac.in" />
             </Head>
 
             <div className={styles.bg}>
