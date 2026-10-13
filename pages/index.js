@@ -26,6 +26,7 @@ import CountdownTimer from './jumscaretimeout'
 import HeroSection from '../components/Hero/Hero'
 import EventDetailsModal from '../components/BigModal'
 import SpecialEventFeature from '../components/SpecialEvent/SpecialEventFeature'
+import Loader from '../components/Loader'
 import AccommodationModal from '../components/Accommodation/AccommodationModal'
 import AccommodationSection from '../components/Accommodation/AccommodationSection'
 // import Spline from '@splinetool/react-spline';
@@ -695,6 +696,7 @@ const IndexPage = () => {
     // events thingyy
     const [events, setEvents] = useState([])
     const [specialEvents, setSpecialEvents] = useState([])
+    const [eventsLoading, setEventsLoading] = useState(true)
     const [selectedSpecialEvent, setSelectedSpecialEvent] = useState(null)
     const [showAccommodationModal, setShowAccommodationModal] = useState(false)
 
@@ -737,6 +739,8 @@ const IndexPage = () => {
                 setSpecialEvents(Array.isArray(specialList) ? specialList : [])
             } catch (e) {
                 console.log('Failed to fetch')
+            } finally {
+                setEventsLoading(false)
             }
         }
         callAPI()
@@ -953,7 +957,18 @@ const IndexPage = () => {
 
                 <div className={styles.fixed_bg}>
                     {/* Events */}
-                    {events.length > 0 && (
+                    {eventsLoading ? (
+                        <section className={styles.events}>
+                            <div className={styles.events_title}>
+                                <div>
+                                    <h2 className={dmSerif.className}>
+                                        Explore the Events
+                                    </h2>
+                                </div>
+                            </div>
+                            <Loader label="Loading events…" />
+                        </section>
+                    ) : events.length > 0 && (
                         <section className={styles.events}>
                             <div className={styles.events_title}>
                                 <div>

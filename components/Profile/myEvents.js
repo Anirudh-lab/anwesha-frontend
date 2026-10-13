@@ -4,6 +4,7 @@ import { AuthContext } from '../authContext'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import ExitStatusModal from './ExitStatusModal'
+import Loader, { ButtonLoader } from '../Loader'
 
 const host = process.env.NEXT_PUBLIC_HOST || '/api/backend'
 
@@ -28,6 +29,8 @@ function MyEvents() {
     const [refreshKey, setRefreshKey] = useState(0)
     const [exitingEventId, setExitingEventId] = useState(null)
     const [exitPass, setExitPass] = useState(null)
+    const [loadingEvents, setLoadingEvents] = useState(true)
+    const [payingId, setPayingId] = useState(null)
     const userData = useContext(AuthContext)
     const authHeaders = userData?.getAuthHeaders ? userData.getAuthHeaders() : {}
 
@@ -135,7 +138,9 @@ function MyEvents() {
                         }}
                         style={{ padding: '8px 16px', background: 'transparent', color: '#F2BF51', border: '1px solid #F2BF51', borderRadius: '4px', cursor: 'pointer', fontWeight: '600', display: 'inline-block' }}
                     >
-                        {isBusy ? 'Loading…' : 'View Exit Pass'}
+                        <ButtonLoader loading={isBusy} label="Loading…">
+                            View Exit Pass
+                        </ButtonLoader>
                     </button>
                 </div>
             )
@@ -154,13 +159,16 @@ function MyEvents() {
                     }}
                     style={{ padding: '8px 16px', background: '#c0392b', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: '600', display: 'inline-block' }}
                 >
-                    {isBusy ? 'Exiting…' : 'Exit Event'}
+                    <ButtonLoader loading={isBusy} label="Exiting…">
+                        Exit Event
+                    </ButtonLoader>
                 </button>
             </div>
         )
     }
 
     const initiatePayment = async (domain, eventId, teamId = null) => {
+        setPayingId(teamId || eventId)
         try {
             toast.info('Initiating secure payment gateway...', { autoClose: 2000 })
             const payload = {
@@ -228,6 +236,8 @@ function MyEvents() {
         } catch (error) {
             console.error("Payment Error", error)
             toast.error('Payment Error. Please try again.', { autoClose: 3000 })
+        } finally {
+            setPayingId(null)
         }
     }
     // Fallback to old endpoint for backward compatibility
@@ -347,7 +357,9 @@ function MyEvents() {
             } catch (error) {
                 console.error('[MyEvents] Error fetching registrations:', error)
                 // Fallback to old endpoint if new one fails
-                fetchEventMyEventsOldEndpoint()
+                await fetchEventMyEventsOldEndpoint()
+            } finally {
+                setLoadingEvents(false)
             }
         }
 
@@ -665,7 +677,9 @@ function MyEvents() {
         // </div>
 
         <div className={styles.eventsInfo}>
-            {!events.solo ||
+            {loadingEvents ? (
+                <Loader label="Loading your events…" />
+            ) : !events.solo ||
             (events.solo.length === 0 &&
                 events.team.length === 0 &&
                 passes.length === 0) ? (
@@ -735,13 +749,16 @@ function MyEvents() {
                                             </div>
                                             <button 
                                                 className={styles.payment_btn}
+                                                disabled={payingId === e.event_id}
                                                 onClick={(event) => {
                                                     event.preventDefault();
                                                     initiatePayment("SOLO_EVENT", e.event_id);
                                                 }}
                                                 style={{ padding: '8px 16px', background: '#ff3e3e', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: '600', display: 'inline-block' }}
                                             >
-                                                Retry Payment
+                                                <ButtonLoader loading={payingId === e.event_id} label="Processing">
+                                                    Retry Payment
+                                                </ButtonLoader>
                                             </button>
                                         </div>
                                     )}
@@ -753,13 +770,16 @@ function MyEvents() {
                                             </div>
                                             <button 
                                                 className={styles.payment_btn}
+                                                disabled={payingId === e.event_id}
                                                 onClick={(event) => {
                                                     event.preventDefault();
                                                     initiatePayment("SOLO_EVENT", e.event_id);
                                                 }}
                                                 style={{ padding: '8px 16px', background: '#e67e22', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: '600', display: 'inline-block' }}
                                             >
-                                                Pay Now
+                                                <ButtonLoader loading={payingId === e.event_id} label="Processing">
+                                                    Pay Now
+                                                </ButtonLoader>
                                             </button>
                                         </div>
                                     )}
@@ -821,13 +841,16 @@ function MyEvents() {
                                             </div>
                                             <button 
                                                 className={styles.payment_btn}
+                                                disabled={payingId === (e.team_id || e.event_id)}
                                                 onClick={(event) => {
                                                     event.preventDefault();
                                                     initiatePayment("TEAM_EVENT", e.event_id, e.team_id);
                                                 }}
                                                 style={{ padding: '8px 16px', background: '#ff3e3e', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: '600', display: 'inline-block' }}
                                             >
-                                                Retry Payment
+                                                <ButtonLoader loading={payingId === (e.team_id || e.event_id)} label="Processing">
+                                                    Retry Payment
+                                                </ButtonLoader>
                                             </button>
                                         </div>
                                     )}
@@ -839,13 +862,16 @@ function MyEvents() {
                                             </div>
                                             <button 
                                                 className={styles.payment_btn}
+                                                disabled={payingId === (e.team_id || e.event_id)}
                                                 onClick={(event) => {
                                                     event.preventDefault();
                                                     initiatePayment("TEAM_EVENT", e.event_id, e.team_id);
                                                 }}
                                                 style={{ padding: '8px 16px', background: '#e67e22', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: '600', display: 'inline-block' }}
                                             >
-                                                Pay Now
+                                                <ButtonLoader loading={payingId === (e.team_id || e.event_id)} label="Processing">
+                                                    Pay Now
+                                                </ButtonLoader>
                                             </button>
                                         </div>
                                     )}

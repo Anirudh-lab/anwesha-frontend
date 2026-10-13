@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { AuthContext } from '../components/authContext'
 import styles from '../styles/profile.module.css'
+import { ButtonLoader } from '../components/Loader'
 import {
     requestUploadUrl,
     submitIdCard,
@@ -649,7 +650,9 @@ export default function SubmitId() {
                                             onMouseUp={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                                             onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                                         >
-                                            {submitting ? (submittingStep || 'Submitting...') : 'Submit Documents for Review'}
+                                            <ButtonLoader loading={submitting} label={submittingStep || 'Submitting'}>
+                                                Submit Documents for Review
+                                            </ButtonLoader>
                                         </button>
                                         <p style={{ textAlign: 'center', color: '#888', fontSize: '0.85rem', margin: 0 }}>
                                             Both documents are securely uploaded and verified by authorized Anwesha administrators.

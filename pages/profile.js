@@ -12,6 +12,7 @@ import { motion, wrap } from 'framer-motion'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Link from 'next/link'
+import Loader, { ButtonLoader } from '../components/Loader'
 
 const host = process.env.NEXT_PUBLIC_HOST || '/api/backend'
 
@@ -280,7 +281,11 @@ function Profile() {
     }
 
     if (!userData?.state?.user) {
-        return null
+        return (
+            <div className={styles.mainContainer}>
+                <Loader label="Loading your profile…" fullPage />
+            </div>
+        )
     }
 
 
@@ -401,7 +406,9 @@ function Profile() {
                                             disabled={uploadingPhoto}
                                         />
                                         <label htmlFor="photo-upload" className={styles.photoUploadLabel} title="Upload Profile Picture">
-                                            {uploadingPhoto ? '⏳' : '📷'}
+                                            <ButtonLoader loading={uploadingPhoto} label="">
+                                                📷
+                                            </ButtonLoader>
                                         </label>
                                     </>
                                 )}
@@ -988,7 +995,9 @@ function Profile() {
                                                 opacity: profileSaving ? 0.7 : 1,
                                             }}
                                         >
-                                            {profileSaving ? 'Saving...' : 'Save Changes'}
+                                            <ButtonLoader loading={profileSaving} label="Saving">
+                                                Save Changes
+                                            </ButtonLoader>
                                         </motion.button>
                                     </div>
                                 </form>
