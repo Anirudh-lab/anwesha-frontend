@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useContext } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 // import Link from 'next/link'
@@ -30,6 +30,7 @@ import AccommodationModal from '../components/Accommodation/AccommodationModal'
 import AccommodationSection from '../components/Accommodation/AccommodationSection'
 // import Spline from '@splinetool/react-spline';
 import { useRouter } from 'next/router'
+import { AuthContext } from '../components/authContext'
 
 const dmSerif = { className: 'font-dm-serif' }
 
@@ -670,6 +671,8 @@ const ImagesSlider = ({
 }
 
 const IndexPage = () => {
+    const authContext = useContext(AuthContext)
+    const isAuth = authContext?.isAuth || false
     const [eventActiveImageIndex, setEventActiveImageIndex] = useState(2) // don't set on boundary
     const [eventActiveImageIndexPrevDir, setEventActiveImageIndexPrevDir] =
         useState(false)
@@ -707,7 +710,8 @@ const IndexPage = () => {
     const [showAccommodationModal, setShowAccommodationModal] = useState(false)
 
     useEffect(() => {
-        // Show accommodation modal once per session / visit
+        // Show accommodation modal only if user is logged in, and only once per session
+        if (!isAuth) return
         if (typeof window !== 'undefined') {
             const hasSeen = sessionStorage.getItem('anwesha_acc_modal_shown')
             if (!hasSeen) {
@@ -718,7 +722,7 @@ const IndexPage = () => {
                 return () => clearTimeout(timer)
             }
         }
-    }, [])
+    }, [isAuth])
     useEffect(() => {
         let host = process.env.NEXT_PUBLIC_HOST || '/api/backend'
 
@@ -952,7 +956,7 @@ const IndexPage = () => {
                             )}
                             onClick={() => router.push('/anweshapass')}
                         >
-                            Get Passes
+                            Garba Passes
                         </button>
                     </div>
                 </HeroSection>
@@ -1059,7 +1063,7 @@ const IndexPage = () => {
 
                                         // onClick={() => router.push('/merch')}
                                     >
-                                        GRAB NOW
+                                        COMING SOON
                                     </button>
                                 </div>
                             </div>

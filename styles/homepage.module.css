@@ -19,7 +19,9 @@
     flex-direction: column;
     align-items: flex-start;
     min-width: 280px;
-    /* SCROLL BAR ON 300px WHICH IS FINE */
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
 }
 
 .bat_scroll_button {
