@@ -4,8 +4,51 @@ import Head from 'next/head'
 import { AuthContext } from '../../components/authContext'
 import { soloEventRegistrationNew } from '../../components/Event Registration/soloEventRegistration'
 import { ToastContainer, toast } from 'react-toastify'
-import modalStyles from '../../components/BigModal/Modal.module.css'
 import styles from '../../styles/event-details.module.css'
+
+const IST = { timeZone: 'Asia/Kolkata' }
+
+const formatDay = (date) =>
+    date.toLocaleDateString('en-IN', { ...IST, weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
+
+const formatTime = (date) =>
+    date.toLocaleTimeString('en-IN', { ...IST, hour: 'numeric', minute: '2-digit' })
+
+const getSchedule = (start, end) => {
+    const startDate = start ? new Date(start) : null
+    if (!startDate || Number.isNaN(startDate.getTime())) return null
+    const endDate = end ? new Date(end) : null
+    if (!endDate || Number.isNaN(endDate.getTime())) {
+        return { date: formatDay(startDate), time: formatTime(startDate) }
+    }
+    if (formatDay(startDate) === formatDay(endDate)) {
+        return { date: formatDay(startDate), time: `${formatTime(startDate)} – ${formatTime(endDate)}` }
+    }
+    return { date: `${formatDay(startDate)} – ${formatDay(endDate)}`, time: `${formatTime(startDate)} onwards` }
+}
+
+const formatPrize = (prize) => {
+    const value = String(prize ?? '').trim()
+    if (!value || value === '0') return null
+    if (/^\d[\d,]*$/.test(value)) return `₹${Number(value.replace(/,/g, '')).toLocaleString('en-IN')}`
+    return value
+}
+
+const getTeamSize = (event) => {
+    if (!event.max_team_size) return null
+    if (event.max_team_size === 1) return 'Individual'
+    if (event.min_team_size === event.max_team_size) return `${event.max_team_size} members`
+    return `${event.min_team_size || 1} – ${event.max_team_size} members`
+}
+
+const getOrganizers = (organizer) => {
+    if (!organizer) return []
+    const entries = Array.isArray(organizer) ? organizer : String(organizer).split(',')
+    return entries
+        .map((entry) => (Array.isArray(entry) ? entry : String(entry).split(':')))
+        .map(([name, phone]) => ({ name: String(name || '').trim(), phone: String(phone || '').trim() }))
+        .filter((person) => person.name)
+}
 
 const EventDetailsPage = () => {
     const router = useRouter()
@@ -180,86 +223,120 @@ const EventDetailsPage = () => {
     }
 
     if (loading) {
-        return <div style={{ color: 'white', textAlign: 'center', marginTop: '100px', fontSize: '24px' }}>Loading...</div>
+        return (
+            <div className={styles.eventPage}>
+                <div className={styles.state}>
+                    <span className={styles.spinner} aria-hidden="true" />
+                    Loading event…
+                </div>
+            </div>
+        )
     }
 
     if (!event) {
-        return <div style={{ color: 'white', textAlign: 'center', marginTop: '100px', fontSize: '24px' }}>Event not found</div>
+        return (
+            <div className={styles.eventPage}>
+                <div className={styles.state}>
+                    <h1>Event not found</h1>
+                    <p>This event may have been moved or is no longer available.</p>
+                    <button className={styles.secondaryButton} onClick={() => router.push('/events')}>
+                        Browse all events
+                    </button>
+                </div>
+            </div>
+        )
     }
 
-    let description = (event.description || '').replace(/\\n/g, '<br />');
+    const description = (event.description || '').replace(/\\n/g, '<br />')
     const title = (event.name || '').split('#')[0]
+    const schedule = getSchedule(event.start_time, event.end_time)
+    const venue = event.venue || event.Venue
+    const teamSize = getTeamSize(event)
+    const prize = formatPrize(event.prize)
+    const fee = Number(event.registration_fee) > 0 ? `₹${Number(event.registration_fee).toLocaleString('en-IN')}` : 'Free'
+    const deadline = event.registration_deadline ? new Date(event.registration_deadline) : null
+    const hasDeadline = Boolean(deadline) && !Number.isNaN(deadline.getTime())
+    const registrationClosed = event.is_active === false || (hasDeadline && Date.now() > deadline.getTime())
+    const organizers = getOrganizers(event.organizer)
+    const mediaLabel = event.video && /youtu/i.test(event.video) ? 'Watch trailer' : 'Rulebook'
+    const isPaymentPending = Boolean(registrationResult) && (
+        registrationResult.payment_required ||
+        String(registrationResult.payment_status || '').toUpperCase() === 'PENDING'
+    )
+
+    const chips = [
+        event.is_special && event.special_event_type && event.special_event_type !== 'OTHER'
+            ? event.special_event_type.replace(/_/g, ' ')
+            : null,
+        ...(Array.isArray(event.tags) ? event.tags.map((tag) => String(tag).replace(/_/g, ' ')) : []),
+        event.is_online ? 'Online' : 'On campus',
+    ].filter(Boolean)
+
+    const facts = [
+        schedule && { label: 'Date', value: schedule.date },
+        schedule && { label: 'Time', value: schedule.time },
+        !schedule && event.Date && { label: 'Date', value: event.Date },
+        !schedule && event.Time && { label: 'Time', value: event.Time },
+        venue && { label: 'Venue', value: venue },
+        teamSize && { label: 'Team size', value: teamSize },
+        prize && { label: 'Prizes', value: prize },
+    ].filter(Boolean)
 
     return (
-        <React.StrictMode>
+        <>
             <Head>
-                <title>{title} - Anwesha 2027</title>
+                <title>{`${title} - Anwesha 2027`}</title>
+                <link
+                    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap"
+                    rel="stylesheet"
+                />
             </Head>
             <div className={styles.eventPage}>
                 <div className={styles.eventShell}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                        <div>
-                            <p className={styles.eyebrow}>ANWESHA 2027 · EVENT DETAILS</p>
-                            <h1 className={styles.eventTitle}>{title}</h1>
-                        </div>
-                    </div>
-                    <hr style={{ borderColor: '#333', marginBottom: '40px' }} />
+                    <button className={styles.backLink} onClick={() => router.push('/events')}>
+                        ← All events
+                    </button>
 
-                    {registrationResult && (
-                        <div className={modalStyles.registration_success} style={{ backgroundColor: '#2a2a2a', padding: '24px', borderRadius: '10px', marginBottom: '30px' }}>
-                            {registrationResult.payment_required || (registrationResult.payment_status && registrationResult.payment_status.toUpperCase() === 'PENDING') ? (
+                    <header className={styles.hero}>
+                        <p className={styles.eyebrow}>Anwesha 2027 · Event details</p>
+                        <h1 className={styles.eventTitle}>{title}</h1>
+                        {chips.length > 0 && (
+                            <ul className={styles.chips}>
+                                {chips.map((chip) => (
+                                    <li key={chip} className={styles.chip}>{chip}</li>
+                                ))}
+                            </ul>
+                        )}
+                    </header>
+
+                    {registrationResult ? (
+                        <div className={`${styles.resultCard} ${isPaymentPending ? styles.resultPending : styles.resultSuccess}`}>
+                            <h2>{isPaymentPending ? 'Complete your payment' : '✓ You are registered'}</h2>
+                            {isPaymentPending ? (
                                 <>
-                                    <div style={{ fontSize: '20px', fontWeight: '600', color: '#e67e22', marginBottom: '12px' }}>
-                                        Complete payment to complete registration
-                                    </div>
-                                    <div style={{ fontSize: '15px', lineHeight: '1.8', color: '#eee' }}>
-                                        {registrationResult.amount_due !== undefined && registrationResult.amount_due !== null && registrationResult.amount_due > 0 && (
-                                            <div><strong>Amount Due:</strong> ₹{registrationResult.amount_due}</div>
-                                        )}
-                                        <p style={{ marginTop: '8px', color: '#aaa' }}>
-                                            Please complete the payment to confirm your registration. You can also complete payment anytime from your profile.
-                                        </p>
-                                    </div>
-                                    <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
-                                        <button
-                                            style={{ padding: '10px 20px', background: '#e67e22', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
-                                            onClick={() => router.push('/profile')}
-                                        >
-                                            Go to Profile
-                                        </button>
-                                        <button
-                                            style={{ padding: '10px 20px', background: '#444', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-                                            onClick={() => setRegistrationResult(null)}
-                                        >
-                                            Close
-                                        </button>
-                                    </div>
+                                    {Number(registrationResult.amount_due) > 0 && (
+                                        <p className={styles.resultAmount}>Amount due: ₹{registrationResult.amount_due}</p>
+                                    )}
+                                    <p>Your spot is reserved until the payment is done. You can also pay later from your profile.</p>
                                 </>
                             ) : (
-                                <>
-                                    <div style={{ fontSize: '22px', fontWeight: '600', color: '#0a7c42', marginBottom: '12px' }}>
-                                        ✓ Successfully Registered
-                                    </div>
-                                    <div style={{ fontSize: '15px', lineHeight: '1.8', color: '#eee' }}>
-                                        <p>You have successfully registered for {title || 'this event'}!</p>
-                                    </div>
-                                    <button
-                                        style={{ marginTop: '20px', padding: '10px 20px', background: '#0a7c42', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-                                        onClick={() => setRegistrationResult(null)}
-                                    >
-                                        Close
-                                    </button>
-                                </>
+                                <p>You have successfully registered for {title || 'this event'}. See you there!</p>
                             )}
+                            <div className={styles.resultActions}>
+                                <button className={styles.registerButton} onClick={() => router.push('/profile')}>
+                                    Go to profile
+                                </button>
+                                <button className={styles.secondaryButton} onClick={() => setRegistrationResult(null)}>
+                                    Back to event
+                                </button>
+                            </div>
                         </div>
-                    )}
-
-                    {!registrationResult && (
+                    ) : (
                         <div className={styles.eventBody}>
-                            <div className={styles.eventMedia}>
+                            <aside className={styles.sidebar}>
                                 <img
                                     src={event.poster || event.poster_url || '/events/poster.png'}
-                                    alt={title}
+                                    alt={`${title} poster`}
                                     className={styles.poster}
                                     onError={(e) => {
                                         const targetId = event.id || event._id || eventId;
@@ -282,78 +359,73 @@ const EventDetailsPage = () => {
                                         }
                                     }}
                                 />
-                                {event.video && (
-                                    <a
-                                        className={styles.rulebook}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        href={event.video}
-                                    >
-                                        Rulebook
-                                    </a>
-                                )}
-                                <button
-                                    className={styles.registerButton}
-                                    onClick={handleRagister}
-                                    disabled={isRegistering}
-                                >
-                                    {isRegistering ? 'Processing...' : 'Register'}
-                                </button>
-                            </div>
-                            
-                            <div className={styles.eventInfo}>
-                                <div className={styles.facts}>
-                                    {(event.start_time && event.end_time) ? (
-                                        <p style={{ margin: '5px 0' }}><strong>Date:</strong> {new Date(event.start_time).toLocaleDateString()} - {new Date(event.end_time).toLocaleDateString()}</p>
-                                    ) : event.Date ? (
-                                        <p style={{ margin: '5px 0' }}><strong>Date:</strong> {event.Date}</p>
-                                    ) : null}
-                                    
-                                    {event.Time && <p style={{ margin: '5px 0' }}><strong>Time:</strong> {event.Time}</p>}
-                                    {(event.venue || event.Venue) && <p style={{ margin: '5px 0' }}><strong>Venue:</strong> {event.venue || event.Venue}</p>}
-                                    
-                                    {event.max_team_size && (
-                                        <p style={{ margin: '5px 0' }}>
-                                            <strong>Team Size:</strong> {event.max_team_size === 1 
-                                                ? 'Individual' 
-                                                : event.min_team_size === event.max_team_size 
-                                                    ? `${event.min_team_size} members` 
-                                                    : `${event.min_team_size} - ${event.max_team_size} members`}
+
+                                <div className={styles.registerCard}>
+                                    <div className={styles.feeRow}>
+                                        <span>Entry fee</span>
+                                        <strong>{fee}</strong>
+                                    </div>
+                                    {hasDeadline && (
+                                        <p className={styles.deadline}>
+                                            {registrationClosed ? 'Registration closed on ' : 'Register by '}
+                                            {formatDay(deadline)}
                                         </p>
                                     )}
-                                    
-                                    {event.registration_fee ? (
-                                        <p style={{ margin: '5px 0' }}><strong>Registration Fee:</strong> ₹{event.registration_fee}</p>
-                                    ) : null}
-                                    
-                                    {event.registration_deadline ? (
-                                        <p style={{ margin: '5px 0' }}>
-                                            <strong>Registration Deadline:</strong> {new Date(event.registration_deadline).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
-                                        </p>
-                                    ) : null}
-
-                                    {event.prize && <p style={{ margin: '5px 0' }}><strong>Prizes worth:</strong> ₹{event.prize}</p>}
+                                    <button
+                                        className={styles.registerButton}
+                                        onClick={handleRagister}
+                                        disabled={isRegistering || registrationClosed}
+                                    >
+                                        {registrationClosed ? 'Registration closed' : isRegistering ? 'Processing…' : 'Register now'}
+                                    </button>
+                                    {event.video && (
+                                        <a className={styles.secondaryButton} target="_blank" rel="noreferrer" href={event.video}>
+                                            {mediaLabel}
+                                        </a>
+                                    )}
                                 </div>
+                            </aside>
 
-                                <h2>Description</h2>
-                                <p dangerouslySetInnerHTML={{ __html: description }} style={{ lineHeight: '1.6', fontSize: '16px', color: '#ddd' }} />
+                            <div className={styles.eventInfo}>
+                                {facts.length > 0 && (
+                                    <dl className={styles.facts}>
+                                        {facts.map((fact) => (
+                                            <div key={fact.label} className={styles.fact}>
+                                                <dt>{fact.label}</dt>
+                                                <dd>{fact.value}</dd>
+                                            </div>
+                                        ))}
+                                    </dl>
+                                )}
 
-                                {event.organizer && (
-                                    <div style={{ marginTop: '30px' }}>
-                                        <h3>Organizers / Contact</h3>
-                                        {Array.isArray(event.organizer) ? (
-                                            <ul style={{ listStyleType: 'none', padding: 0 }}>
-                                                {event.organizer.map((e, index) => (
-                                                    <li key={index} style={{ marginBottom: '10px' }}>
-                                                        <span style={{ fontWeight: 'bold' }}>{e[0]}</span>
-                                                        {e[1] && <span style={{ marginLeft: '10px' }}><a href={`tel:${e[1]}`} style={{ color: '#aaa', textDecoration: 'none' }}>{e[1]}</a></span>}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        ) : (
-                                            <p>{event.organizer}</p>
-                                        )}
-                                    </div>
+                                {description && (
+                                    <section className={styles.section}>
+                                        <h2>About the event</h2>
+                                        <div className={styles.description} dangerouslySetInnerHTML={{ __html: description }} />
+                                    </section>
+                                )}
+
+                                {organizers.length > 0 && (
+                                    <section className={styles.section}>
+                                        <h2>Contact the organisers</h2>
+                                        <ul className={styles.organizers}>
+                                            {organizers.map((person) => (
+                                                <li key={`${person.name}-${person.phone}`} className={styles.organizer}>
+                                                    <span className={styles.avatar} aria-hidden="true">
+                                                        {person.name.charAt(0).toUpperCase()}
+                                                    </span>
+                                                    <div>
+                                                        <p className={styles.organizerName}>{person.name}</p>
+                                                        {person.phone && (
+                                                            <a className={styles.organizerPhone} href={`tel:${person.phone}`}>
+                                                                {person.phone}
+                                                            </a>
+                                                        )}
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </section>
                                 )}
                             </div>
                         </div>
@@ -361,7 +433,7 @@ const EventDetailsPage = () => {
                 </div>
                 <ToastContainer />
             </div>
-        </React.StrictMode>
+        </>
     )
 }
 
