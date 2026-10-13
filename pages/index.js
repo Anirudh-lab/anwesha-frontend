@@ -432,8 +432,8 @@ const EventSlider = ({
                             index === currIndex
                                 ? '2'
                                 : index === prev || index === next
-                                ? '1'
-                                : '-1',
+                                    ? '1'
+                                    : '-1',
                         position: 'absolute',
                         left: '50%',
                         top: '50%',
@@ -442,13 +442,11 @@ const EventSlider = ({
                         transform:
                             index == currIndex
                                 ? `translateY(-50%) translateX(-50%)`
-                                : `translateY(-50%) translateX(calc(-50% ${
-                                      currIndex > index ? '-' : '+'
-                                  } min(50vw - 200px, ${
-                                      (currIndex > index
-                                          ? currIndex - index
-                                          : index - currIndex) * offset
-                                  }px)))`,
+                                : `translateY(-50%) translateX(calc(-50% ${currIndex > index ? '-' : '+'
+                                } min(50vw - 200px, ${(currIndex > index
+                                    ? currIndex - index
+                                    : index - currIndex) * offset
+                                }px)))`,
                         transition:
                             'transform .15s linear, width .15s linear, height .15s linear', // Smooth transition
                     }}
@@ -487,9 +485,8 @@ const SponsorsSlider = ({ images, animation_duration = -1 }) => {
                         position: 'absolute',
                         left: '100%',
                         // zIndex: 8,
-                        animationDelay: `${
-                            (duration / images.length) * index
-                        }s`,
+                        animationDelay: `${(duration / images.length) * index
+                            }s`,
                         animationDuration: `${duration}s`,
                         '--width': width,
                     }}
@@ -540,14 +537,12 @@ const ImagesSlider = ({
             imageRefs.current[prevprevprev].current.style.zIndex = '-1'
             imageRefs.current[
                 prevprevprev
-            ].current.style.transform = `translateX(calc(-50% + ${
-                3 * offset
+            ].current.style.transform = `translateX(calc(-50% + ${3 * offset
             }px))`
             imageRefs.current[prevprev].current.style.zIndex = '4'
             imageRefs.current[
                 prevprev
-            ].current.style.transform = `translateX(calc(-50% - ${
-                2 * offset
+            ].current.style.transform = `translateX(calc(-50% - ${2 * offset
             }px))`
             imageRefs.current[prev].current.style.zIndex = '3'
             imageRefs.current[
@@ -564,8 +559,7 @@ const ImagesSlider = ({
             imageRefs.current[nextnext].current.style.zIndex = '1'
             imageRefs.current[
                 nextnext
-            ].current.style.transform = `translateX(calc(-50% + ${
-                2 * offset
+            ].current.style.transform = `translateX(calc(-50% + ${2 * offset
             }px))`
         } else if (
             currIndex === oldIndex - 1 ||
@@ -575,8 +569,7 @@ const ImagesSlider = ({
             imageRefs.current[prevprev].current.style.zIndex = '1'
             imageRefs.current[
                 prevprev
-            ].current.style.transform = `translateX(calc(-50% - ${
-                2 * offset
+            ].current.style.transform = `translateX(calc(-50% - ${2 * offset
             }px))`
             imageRefs.current[prev].current.style.zIndex = '2'
             imageRefs.current[
@@ -593,14 +586,12 @@ const ImagesSlider = ({
             imageRefs.current[nextnext].current.style.zIndex = '4'
             imageRefs.current[
                 nextnext
-            ].current.style.transform = `translateX(calc(-50% + ${
-                2 * offset
+            ].current.style.transform = `translateX(calc(-50% + ${2 * offset
             }px))`
             imageRefs.current[nextnextnext].current.style.zIndex = '-1'
             imageRefs.current[
                 nextnextnext
-            ].current.style.transform = `translateX(calc(-50% - ${
-                3 * offset
+            ].current.style.transform = `translateX(calc(-50% - ${3 * offset
             }px))`
         }
         setOldIndex(currIndex)
@@ -655,13 +646,11 @@ const ImagesSlider = ({
                     style={{
                         position: 'absolute',
                         left: '50%',
-                        transform: `translateX(calc(-50% ${
-                            currIndex > index ? '-' : '+'
-                        } ${
-                            (currIndex > index
+                        transform: `translateX(calc(-50% ${currIndex > index ? '-' : '+'
+                            } ${(currIndex > index
                                 ? currIndex - index
                                 : index - currIndex) * offset
-                        }px))`,
+                            }px))`,
                         transition: 'transform 0.35s ease-in-out', // Smooth transition
                     }}
                 />
@@ -709,20 +698,20 @@ const IndexPage = () => {
     const [selectedSpecialEvent, setSelectedSpecialEvent] = useState(null)
     const [showAccommodationModal, setShowAccommodationModal] = useState(false)
 
-    useEffect(() => {
-        // Show accommodation modal only if user is logged in, and only once per session
-        if (!isAuth) return
-        if (typeof window !== 'undefined') {
-            const hasSeen = sessionStorage.getItem('anwesha_acc_modal_shown')
-            if (!hasSeen) {
-                const timer = setTimeout(() => {
-                    setShowAccommodationModal(true)
-                    sessionStorage.setItem('anwesha_acc_modal_shown', 'true')
-                }, 1000)
-                return () => clearTimeout(timer)
-            }
-        }
-    }, [isAuth])
+    // useEffect(() => {
+    //     // Show accommodation modal only if user is logged in, and only once per session
+    //     if (!isAuth) return
+    //     if (typeof window !== 'undefined') {
+    //         const hasSeen = sessionStorage.getItem('anwesha_acc_modal_shown')
+    //         if (!hasSeen) {
+    //             const timer = setTimeout(() => {
+    //                 setShowAccommodationModal(true)
+    //                 sessionStorage.setItem('anwesha_acc_modal_shown', 'true')
+    //             }, 1000)
+    //             return () => clearTimeout(timer)
+    //         }
+    //     }
+    // }, [isAuth])
     useEffect(() => {
         let host = process.env.NEXT_PUBLIC_HOST || '/api/backend'
 
@@ -1011,15 +1000,15 @@ const IndexPage = () => {
 
                     {/* Special Events */}
                     {specialEvents.length > 0 && (
-    <SpecialEventFeature
-        event={specialEvents[0]}
-        posterUrl={makePosterUrl(
-            specialEvents[0].poster_url ||
-            specialEvents[0].poster_file ||
-            specialEvents[0].poster
-        )}
-    />
-)}
+                        <SpecialEventFeature
+                            event={specialEvents[0]}
+                            posterUrl={makePosterUrl(
+                                specialEvents[0].poster_url ||
+                                specialEvents[0].poster_file ||
+                                specialEvents[0].poster
+                            )}
+                        />
+                    )}
 
                     <AccommodationModal
                         isOpen={showAccommodationModal}
@@ -1062,7 +1051,7 @@ const IndexPage = () => {
                                         }
                                         disabled
 
-                                        // onClick={() => router.push('/merch')}
+                                    // onClick={() => router.push('/merch')}
                                     >
                                         COMING SOON
                                     </button>
@@ -1153,11 +1142,11 @@ const IndexPage = () => {
 
                     {/* CTA or This was Our Theme */}
                     <section className={styles.cta}>
-                            <div className={styles.sexy_title}>
-                                <h2 className={dmSerif.className}>
-                                    This was Our Theme
-                                </h2>
-                                <h3>Palingenesis reverie</h3>
+                        <div className={styles.sexy_title}>
+                            <h2 className={dmSerif.className}>
+                                This was Our Theme
+                            </h2>
+                            <h3>Palingenesis reverie</h3>
                         </div>
                         <div className={styles.cta_body}>
                             <div className={styles.cta_body_left}>
