@@ -1122,6 +1122,7 @@
 
 .Melody_Night {
     display: flex;
+    margin-top: 40px;
     padding: 100px 64px 100px 64px;
     justify-content: center;
     align-items: center;
@@ -1167,6 +1168,7 @@
 .Melody_Night_body>div>h3 {
     align-self: stretch;
     color: #fff;
+    text-align: center;
 
     /* AN/AN - 24 */
     font-family: 'Cinzel_Decorative', serif;
@@ -1188,6 +1190,10 @@
     font-weight: 400;
     line-height: 150%;
     /* 30px */
+}
+
+.Melody_Night_body>div:last-child {
+    align-self: center;
 }
 
 .Melody_Night_hero {
@@ -1258,9 +1264,17 @@
 }
 
 @media only screen and (max-width: 768px) {
+    .Melody_Night {
+        padding-bottom: 0;
+    }
+
+    .passcontainer {
+        margin-top: 0;
+    }
+
     .Melody_Night_body {
         gap: 22px;
-        margin-bottom: 90px;
+        margin-bottom: 0;
     }
 
     .Melody_Night_body>div {
@@ -1283,6 +1297,7 @@
     .Melody_Night {
         padding-left: 15px;
         padding-right: 15px;
+        padding-bottom: 0;
     }
 
     .Melody_Night_body {
@@ -1301,7 +1316,7 @@
     }
 
     .Melody_Night_hero {
-        height: 500px;
+        height: 150px;
     }
 
     .Melody_Night_body>p {
