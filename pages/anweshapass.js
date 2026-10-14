@@ -413,18 +413,17 @@ function Anweshapass() {
         //     </div>
         // </div>
         <div className={styles.container}>
-            <div className={styles.linkContainer}>
-                <a
-                    href="https://drive.google.com/file/d/173X6YlCzY5McPT-5tA_-l2O4I0Pm-n0K/view?usp=drivesdk"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    How to buy the festival passes
-                </a>
-            </div>
-
             {/* -------------------------------------Garba Night Pass---------------------------------------- */}
             <section className={styles.Melody_Night}>
+                <div className={styles.linkContainer}>
+                    <a
+                        href="https://drive.google.com/file/d/173X6YlCzY5McPT-5tA_-l2O4I0Pm-n0K/view?usp=drivesdk"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        How to buy the festival passes
+                    </a>
+                </div>
                 <div className={styles.Melody_Night_hero}>
                     <div className={styles.Melody_Night_background} />
                     <div className={styles.Melody_Night_imgbg}>
